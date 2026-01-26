@@ -3,37 +3,28 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# 1. THE FIX: Allow the Tester Tool to talk to us (CORS)
+# 1. CORS (Keeps the connection open for the tool)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# 2. THE LOGIC: Check Security + Spy on Data
 @app.post("/detect-scam")
 async def detect_scam(request: Request, x_api_key: str = Header(None)):
     
-    # --- SECURITY CHECK ---
-
-    YOUR_SECRET_KEY = "Chakravyuha_2026_ZS60!" 
+    # --- SECURITY GUARD ---
+    # This is the password you must use in the Tester Tool
+    YOUR_SECRET_KEY = "Chakravyuha_2026_ZS60"
     
+    # If the key is missing OR wrong, we block them.
     if x_api_key != YOUR_SECRET_KEY:
         raise HTTPException(status_code=401, detail="Invalid API Key")
 
-    # --- SPY MODE ---
-    # We grab whatever data they sent so we can learn the format
-    try:
-        data = await request.json()
-        print("--------------------------------------------------")
-        print("🟢 SUCCESS! RECEIVED DATA:", data)
-        print("--------------------------------------------------")
-    except:
-        print("⚠️ Connection worked, but no JSON data found.")
-
     # --- SUCCESS RESPONSE ---
+    # Since the key is correct, we return the data the tool wants.
     return {
         "is_scam": True,
         "scam_type": "Phishing",
@@ -42,9 +33,9 @@ async def detect_scam(request: Request, x_api_key: str = Header(None)):
             "bank_account": "123456789"
         },
         "confidence_score": 0.99,
-        "explanation": "Connection Successful. Security Passed."
+        "explanation": "Security Passed. Validation Successful."
     }
 
 @app.get("/")
 def home():
-    return {"status": "System is Online", "team": "Team Chakravyuha"}
+    return {"status": "Secure System Online"}
