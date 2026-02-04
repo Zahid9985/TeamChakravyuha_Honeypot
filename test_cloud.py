@@ -11,7 +11,7 @@ payload = {
 
 # 3. The Headers (Your Password)
 headers = {
-    "x-api-key": "Chakravyuha_2026_ZS60!"
+    "x-api-key": "Chakravyuha_2026_ZS60"
 }
 
 print(f"🚀 Sending message to {url}...")
